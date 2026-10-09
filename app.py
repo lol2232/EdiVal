@@ -6,7 +6,7 @@ GPU environment as eval.py (see README "Getting Started").
 
     python app.py                 # http://localhost:7860
     python app.py --share         # public gradio.live link
-    python app.py --tp 1          # run the VLM on a single GPU
+    python app.py --tp 1 --gpu-mem 0.75   # single 24 GB GPU
 """
 import argparse
 import json
@@ -76,12 +76,14 @@ PROMPT_EXAMPLES = """\
 MODELS: Dict[str, object] = {}
 
 
-def load_models(tensor_parallel_size: int) -> None:
+def load_models(tensor_parallel_size: int, gpu_memory_utilization: float) -> None:
     from detector.instruction_detector import load_instruction_model
     from detector.quality_detector import load_quality_model
     from detector.consistency_detector import load_consistency_model
 
-    MODELS["grounding"], MODELS["vlm"] = load_instruction_model(tensor_parallel_size=tensor_parallel_size)
+    MODELS["grounding"], MODELS["vlm"] = load_instruction_model(
+        tensor_parallel_size=tensor_parallel_size, gpu_memory_utilization=gpu_memory_utilization
+    )
     MODELS["quality"], MODELS["hps"] = load_quality_model()
     MODELS["dinov3"] = load_consistency_model()
 
@@ -234,11 +236,13 @@ def build_ui() -> gr.Blocks:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="EdiVal single-edit evaluation GUI")
     parser.add_argument("--tp", type=int, default=2, help="tensor parallel size for the Qwen2-VL judge (number of GPUs)")
+    parser.add_argument("--gpu-mem", type=float, default=0.5,
+                        help="fraction of each GPU's memory reserved for the Qwen2-VL judge (raise to ~0.75 on a single 24 GB GPU)")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=7860)
     parser.add_argument("--share", action="store_true", help="create a public gradio.live link")
     args = parser.parse_args()
 
     print("Loading EdiVal models (first run downloads weights from Hugging Face)...")
-    load_models(args.tp)
+    load_models(args.tp, args.gpu_mem)
     build_ui().queue(default_concurrency_limit=1).launch(server_name=args.host, server_port=args.port, share=args.share)

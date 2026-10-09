@@ -211,7 +211,13 @@ python generate.py --editor-class my_module:MyCustomGenerator ...
 
    ```bash
    pip install gradio
-   python app.py            # open http://localhost:7860; add --share for a public link, --tp 1 for one GPU
+   python app.py            # open http://localhost:7860; add --share for a public link, --tp 1 --gpu-mem 0.75 for one 24 GB GPU
+   ```
+
+   **Windows (NVIDIA GPU, 24 GB+ VRAM):** open PowerShell as Administrator and run the line below. It installs WSL2 Ubuntu, CUDA, conda and all dependencies, then puts a *Start EdiVal GUI* shortcut on your desktop.
+
+   ```powershell
+   Set-ExecutionPolicy -Scope Process Bypass -Force; irm https://raw.githubusercontent.com/lol2232/EdiVal/add-gradio-gui/env_setup/setup_windows.ps1 -OutFile $env:TEMP\setup_edival.ps1; & $env:TEMP\setup_edival.ps1
    ```
 
    Upload the original image (A), the edited image (B), and the edit prompt, then press **Evaluate** to get instruction-following, quality, and (optionally) consistency scores. Prompts in the bracketed task format (e.g. `Change the color of [car] to [red]`) use EdiVal's task-specific checks; other prompts fall back to a generic Qwen2-VL yes/no judge.

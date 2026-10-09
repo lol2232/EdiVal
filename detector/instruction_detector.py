@@ -132,7 +132,7 @@ BACKGROUND_CHANGE_FORMAT = "Change the background to [{background}]"
 POSITIONS = ["left", "right", "above", "below"]
 
 # model is an already loaded model
-def load_instruction_model(tensor_parallel_size=2):
+def load_instruction_model(tensor_parallel_size=2, gpu_memory_utilization=0.5):
     """Load the grounding dino model and VLM model"""
     # Load Grounding DINO model
     config_path = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
@@ -145,7 +145,7 @@ def load_instruction_model(tensor_parallel_size=2):
         trust_remote_code=True,
         max_model_len=2048,
         limit_mm_per_prompt={"image": 2},
-        gpu_memory_utilization=0.5,
+        gpu_memory_utilization=gpu_memory_utilization,
         tensor_parallel_size=tensor_parallel_size,
     )
     
