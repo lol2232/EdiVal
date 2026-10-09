@@ -207,6 +207,15 @@ python generate.py --editor-class my_module:MyCustomGenerator ...
 
    Backfills missing HPSv3 scores into the evaluation JSONs.
 
+4. **Interactive GUI (single edit)**
+
+   ```bash
+   pip install gradio
+   python app.py            # open http://localhost:7860; add --share for a public link, --tp 1 for one GPU
+   ```
+
+   Upload the original image (A), the edited image (B), and the edit prompt, then press **Evaluate** to get instruction-following, quality, and (optionally) consistency scores. Prompts in the bracketed task format (e.g. `Change the color of [car] to [red]`) use EdiVal's task-specific checks; other prompts fall back to a generic Qwen2-VL yes/no judge.
+
 ---
 
 ## Analysis & Reproduction
